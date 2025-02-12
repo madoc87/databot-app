@@ -1,6 +1,7 @@
 // frontend/src/pages/Dashboard.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../api';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, Paper, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { Bar, Pie } from 'react-chartjs-2';
@@ -18,7 +19,8 @@ const Dashboard = () => {
   const chartHeight = 350; // Alterar altura do grafico
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/campanhas/${id}`)
+    // axios.get(`http://localhost:5000/api/campanhas/${id}`)
+    api.get(`/api/campanhas/${id}`)
       .then(response => setCampanha(response.data))
       .catch(error => console.error('Erro ao buscar campanha:', error));
   }, [id]);

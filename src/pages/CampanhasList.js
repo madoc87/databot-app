@@ -1,6 +1,7 @@
 // frontend/src/pages/CampanhasList.js
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../api';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Typography, Box, Paper } from '@mui/material';
 
@@ -9,7 +10,8 @@ const CampanhasList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/campanhas')
+    // axios.get('http://localhost:5000/api/campanhas')
+    api.get('/api/campanhas')
       .then((response) => setCampanhas(response.data))
       .catch((error) => console.error('Erro ao buscar campanhas:', error));
   }, []);

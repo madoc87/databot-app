@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../api'; // Importa a instância centralizada
 import { Button, TextField, Box, Typography, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,7 +50,8 @@ const AdicionarCampanha = () => {
 
 
     try {
-      await axios.post('http://localhost:5000/api/campanhas', campanha);
+      // await axios.post('http://localhost:5000/api/campanhas', campanha);
+      await api.post('/api/campanhas', campanha);
       alert('Campanha cadastrada!');
       navigate('/');
     } catch (error) {

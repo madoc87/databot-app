@@ -22,7 +22,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
-import axios from 'axios';
+import api from '../api'; // Importa a instância centralizada
 
 const CadastroVendas = () => {
   // Preenche a data com a data atual
@@ -53,12 +53,12 @@ const CadastroVendas = () => {
   // Busca as vendas do dia selecionado (ou todas em modo agrupado)
   useEffect(() => {
     if (groupedView) {
-      axios.get('http://localhost:5000/api/vendas')
+      api.get('/api/vendas')
         .then(response => setSales(response.data))
         .catch(error => console.error(error));
     } else {
       if (dataVenda) {
-        axios.get(`http://localhost:5000/api/vendas?data=${dataVenda}`)
+        api.get(`/api/vendas?data=${dataVenda}`)
           .then(response => setSales(response.data))
           .catch(error => console.error(error));
       } else {
@@ -95,7 +95,7 @@ const CadastroVendas = () => {
         riscado: sales[editingIndex].riscado || 0,
         mensagem: sales[editingIndex].mensagem || null
       };
-      axios.put(`http://localhost:5000/api/vendas/${vendaForm.id}`, { ...updatedVenda, data_venda: dataVenda })
+      api.put(`/api/vendas/${vendaForm.id}`, { ...updatedVenda, data_venda: dataVenda })
         .then(response => {
           const updatedSales = sales.map((sale, index) =>
             index === editingIndex ? updatedVenda : sale
@@ -111,7 +111,7 @@ const CadastroVendas = () => {
         riscado: 0,
         mensagem: null
       };
-      axios.post('http://localhost:5000/api/vendas', { ...novaVenda, data_venda: dataVenda })
+      api.post('/api/vendas', { ...novaVenda, data_venda: dataVenda })
         .then(response => {
           novaVenda.id = response.data.id;
           setSales(prev => [...prev, novaVenda]);
@@ -138,7 +138,7 @@ const CadastroVendas = () => {
     const sale = sales.find(s => s.id === key);
     if (sale && sale.riscado) {
       // Desmarcar: atualiza o registro no backend para remover o toggle
-      axios.put(`http://localhost:5000/api/vendas/${sale.id}`, { ...sale, riscado: 0, mensagem: null })
+      api.put(`/api/vendas/${sale.id}`, { ...sale, riscado: 0, mensagem: null })
         .then(response => {
           const updatedSales = sales.map(s => s.id === sale.id ? { ...s, riscado: 0, mensagem: null } : s);
           setSales(updatedSales);
@@ -156,7 +156,7 @@ const CadastroVendas = () => {
     if (activeCardKey != null) {
       const sale = sales.find(s => s.id === activeCardKey);
       if (sale) {
-        axios.put(`http://localhost:5000/api/vendas/${sale.id}`, { ...sale, riscado: 1, mensagem: option })
+        api.put(`/api/vendas/${sale.id}`, { ...sale, riscado: 1, mensagem: option })
           .then(response => {
             const updatedSales = sales.map(s => s.id === sale.id ? { ...s, riscado: 1, mensagem: option } : s);
             setSales(updatedSales);
