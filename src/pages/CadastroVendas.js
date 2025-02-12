@@ -23,8 +23,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import api from '../api'; // Importa a instância centralizada
+import { useTheme } from '@mui/material';
 
 const CadastroVendas = () => {
+  const theme = useTheme();
+
   // Preenche a data com a data atual
   const today = new Date().toISOString().split('T')[0];
   const [dataVenda, setDataVenda] = useState(today);
@@ -200,9 +203,17 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
     }, {});
   };
 
+  // Exemplo de uso do theme para decorar o cabeçalho do componente:
+  const headerSx = {
+    color: theme.palette.text.primary,
+    mb: 2
+  };
+
   return (
     <Box sx={{ maxWidth: 800, margin: 'auto', padding: '2rem' }}>
-      <Typography variant="h5" gutterBottom>Cadastro de Vendas</Typography>
+      <Typography variant="h6" sx={headerSx}>
+        Vendas do dia: {dataVenda}
+      </Typography>
       
       {/* Campo de data já preenchido com a data atual */}
       {!groupedView && (
@@ -211,7 +222,13 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
           type="date"
           value={dataVenda}
           onChange={(e) => setDataVenda(e.target.value)}
-          InputLabelProps={{ shrink: true }}
+          InputLabelProps={{
+            shrink: true,
+            style: { color: theme.palette.text.primary }
+          }}
+          InputProps={{
+            style: { color: theme.palette.text.primary }
+          }}
           fullWidth
           margin="normal"
           sx={{ fontSize: '14px' }}
@@ -278,25 +295,37 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl component="fieldset" fullWidth required>
-              <FormLabel component="legend" sx={{ fontSize: '14px' }}>Periodo</FormLabel>
+            <FormControl component="fieldset" fullWidth required sx={{ color: 'text.primary' }}>
+              <FormLabel component="legend" sx={{ color: 'text.primary', fontSize: '14px' }}>
+                Período
+              </FormLabel>
               <RadioGroup row name="periodo" value={vendaForm.periodo} onChange={handleInputChange}>
-                <FormControlLabel value="Manhã" control={<Radio />} label="Manhã" />
-                <FormControlLabel value="Tarde" control={<Radio />} label="Tarde" />
+                <FormControlLabel 
+                  value="Manhã" 
+                  control={<Radio sx={{ color: 'text.primary' }} />} 
+                  label="Manhã" 
+                  sx={{ color: 'text.primary', fontSize: '14px' }} 
+                />
+                <FormControlLabel 
+                  value="Tarde" 
+                  control={<Radio sx={{ color: 'text.primary' }} />} 
+                  label="Tarde" 
+                  sx={{ color: 'text.primary', fontSize: '14px' }} 
+                />
               </RadioGroup>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl component="fieldset" fullWidth required>
-              <FormLabel component="legend" sx={{ fontSize: '14px' }}>Pagamento</FormLabel>
+              <FormLabel component="legend" sx={{ color: 'text.primary', fontSize: '14px' }}>Pagamento</FormLabel>
               <RadioGroup row name="pagamento" value={vendaForm.pagamento} onChange={handleInputChange}>
-                <FormControlLabel value="Dinheiro" control={<Radio />} label="Dinheiro" />
-                <FormControlLabel value="PIX" control={<Radio />} label="PIX" />
-                <FormControlLabel value="Debito" control={<Radio />} label="Debito" />
-                <FormControlLabel value="Cartão 1x" control={<Radio />} label="Cartão 1x" />
-                <FormControlLabel value="Cartão 2x" control={<Radio />} label="Cartão 2x" />
-                <FormControlLabel value="Cartão 3x" control={<Radio />} label="Cartão 3x" />
-                <FormControlLabel value="Outro" control={<Radio />} label="Outro" />
+                <FormControlLabel value="Dinheiro" control={<Radio sx={{ color: 'text.primary' }} />} label="Dinheiro" sx={{ color: 'text.primary', fontSize: '14px' }} />
+                <FormControlLabel value="PIX" control={<Radio sx={{ color: 'text.primary' }} />} label="PIX" sx={{ color: 'text.primary', fontSize: '14px' }} />
+                <FormControlLabel value="Debito" control={<Radio sx={{ color: 'text.primary' }} />} label="Debito" sx={{ color: 'text.primary', fontSize: '14px' }} />
+                <FormControlLabel value="Cartão 1x" control={<Radio sx={{ color: 'text.primary' }} />} label="Cartão 1x" sx={{ color: 'text.primary', fontSize: '14px' }} />
+                <FormControlLabel value="Cartão 2x" control={<Radio sx={{ color: 'text.primary' }} />} label="Cartão 2x" sx={{ color: 'text.primary', fontSize: '14px' }} />
+                <FormControlLabel value="Cartão 3x" control={<Radio sx={{ color: 'text.primary' }} />} label="Cartão 3x" sx={{ color: 'text.primary', fontSize: '14px' }} />
+                <FormControlLabel value="Outro" control={<Radio sx={{ color: 'text.primary' }} />} label="Outro" sx={{ color: 'text.primary', fontSize: '14px' }} />
               </RadioGroup>
             </FormControl>
           </Grid>
@@ -366,34 +395,36 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
       )}
 
       <Box sx={{ marginTop: '2rem' }}>
-        <Typography variant="h6" gutterBottom>Vendas Cadastradas</Typography>
+        <Typography variant="h6" sx={{ color: 'text.primary', mt: 2 }}>
+          Vendas Cadastradas
+        </Typography>
         {groupedView ? (
           Object.entries(getGroupedSales())
             .sort(([dataA], [dataB]) => dataA.localeCompare(dataB))
             .map(([data_venda, vendas]) => (
               <Box key={data_venda} sx={{ marginBottom: '2rem' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{data_venda}</Typography>
+                <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 'bold' }}>{data_venda}</Typography>
                 {vendas.map((venda, index) => {
                   const key = venda.id ? venda.id : index;
                   return (
                     <Card key={key} sx={{ marginTop: '1rem', position: 'relative', padding: '1rem' }}>
                       {venda.riscado ? (
-                        <Typography variant="caption" sx={{ fontWeight: 'bold', mb: 1, display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: 'text.primary', fontWeight: 'bold', mb: 1, display: 'block' }}>
                           {venda.mensagem}
                         </Typography>
                       ) : null}
                       <CardContent sx={venda.riscado ? { textDecoration: 'line-through', color: 'gray' } : {}}>
-                        <Typography variant="subtitle1">{venda.cliente}</Typography>
-                        <Typography>Status: {venda.status}</Typography>
-                        <Typography>Telefone: {venda.telefone}</Typography>
-                        <Typography>Dia: {venda.dia}</Typography>
-                        <Typography>Periodo: {venda.periodo}</Typography>
-                        <Typography>Pagamento: {venda.pagamento}</Typography>
-                        <Typography>End: {venda.end}</Typography>
-                        <Typography>CPF: {venda.cpf}</Typography>
-                        <Typography>E-mail: {venda.email}</Typography>
+                        <Typography variant="subtitle1" color="text.primary">{venda.cliente}</Typography>
+                        <Typography variant="body1" color="text.primary">Status: {venda.status}</Typography>
+                        <Typography variant="body1" color="text.primary">Telefone: {venda.telefone}</Typography>
+                        <Typography variant="body1" color="text.primary">Dia: {venda.dia}</Typography>
+                        <Typography variant="body1" color="text.primary">Periodo: {venda.periodo}</Typography>
+                        <Typography variant="body1" color="text.primary">Pagamento: {venda.pagamento}</Typography>
+                        <Typography variant="body1" color="text.primary">End: {venda.end}</Typography>
+                        <Typography variant="body1" color="text.primary">CPF: {venda.cpf}</Typography>
+                        <Typography variant="body1" color="text.primary">E-mail: {venda.email}</Typography>
                         {venda.observacao && (
-                          <Typography variant="body2" color="textSecondary">
+                          <Typography variant="body2" color="text.secondary">
                             Observação: {venda.observacao}
                           </Typography>
                         )}
@@ -426,22 +457,22 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
             return (
               <Card key={key} sx={{ marginTop: '1rem', position: 'relative', padding: '1rem' }}>
                 {venda.riscado ? (
-                  <Typography variant="caption" sx={{ fontWeight: 'bold', mb: 1, display: 'block' }}>
+                  <Typography variant="caption" sx={{ color: 'text.primary', fontWeight: 'bold', mb: 1, display: 'block' }}>
                     {venda.mensagem}
                   </Typography>
                 ) : null}
                 <CardContent sx={venda.riscado ? { textDecoration: 'line-through', color: 'gray' } : {}}>
-                  <Typography variant="subtitle1">{venda.cliente}</Typography>
-                  <Typography>Status: {venda.status}</Typography>
-                  <Typography>Telefone: {venda.telefone}</Typography>
-                  <Typography>Dia: {venda.dia}</Typography>
-                  <Typography>Periodo: {venda.periodo}</Typography>
-                  <Typography>Pagamento: {venda.pagamento}</Typography>
-                  <Typography>End: {venda.end}</Typography>
-                  <Typography>CPF: {venda.cpf}</Typography>
-                  <Typography>E-mail: {venda.email}</Typography>
+                  <Typography variant="subtitle1" color="text.primary">{venda.cliente}</Typography>
+                  <Typography variant="body1" color="text.primary">Status: {venda.status}</Typography>
+                  <Typography variant="body1" color="text.primary">Telefone: {venda.telefone}</Typography>
+                  <Typography variant="body1" color="text.primary">Dia: {venda.dia}</Typography>
+                  <Typography variant="body1" color="text.primary">Periodo: {venda.periodo}</Typography>
+                  <Typography variant="body1" color="text.primary">Pagamento: {venda.pagamento}</Typography>
+                  <Typography variant="body1" color="text.primary">End: {venda.end}</Typography>
+                  <Typography variant="body1" color="text.primary">CPF: {venda.cpf}</Typography>
+                  <Typography variant="body1" color="text.primary">E-mail: {venda.email}</Typography>
                   {venda.observacao && (
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" color="text.secondary">
                       Observação: {venda.observacao}
                     </Typography>
                   )}
