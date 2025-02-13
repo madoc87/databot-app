@@ -272,7 +272,7 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <label htmlFor="telefone">Telefone</label>
+            {/* <label htm  lFor="telefone">Telefone</label> */}
             <TextField
               id="telefone"
               name="telefone"

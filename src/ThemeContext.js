@@ -1,30 +1,21 @@
 import React, { createContext, useMemo, useState } from 'react';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material';
 import { lightTheme, darkTheme } from './theme';
 
-export const CustomThemeContext = createContext({
-  currentTheme: 'light',
-  setTheme: null,
-});
+export const CustomThemeContext = createContext();
 
 export const CustomThemeProvider = ({ children }) => {
-  const [themeName, setThemeName] = useState('light');
+  const [currentTheme, setTheme] = useState('dark');
 
-  const theme = useMemo(() => (themeName === 'light' ? lightTheme : darkTheme), [themeName]);
-
-  const contextValue = useMemo(
-    () => ({
-      currentTheme: themeName,
-      setTheme: setThemeName,
-    }),
-    [themeName]
-  );
+  const theme = useMemo(() => (currentTheme === 'light' ? lightTheme : darkTheme), [currentTheme]);
 
   return (
-    <CustomThemeContext.Provider value={contextValue}>
+    <CustomThemeContext.Provider value={{ currentTheme, setTheme }}>
       <ThemeProvider theme={theme}>
         {children}
       </ThemeProvider>
     </CustomThemeContext.Provider>
   );
 };
+
+export default CustomThemeProvider;
