@@ -3,10 +3,15 @@ import React, { useEffect, useState } from 'react';
 // import axios from 'axios';
 import api from '../api';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Typography, Box, Paper } from '@mui/material';
+import { 
+  Button, Typography, Box, Paper,
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+} from '@mui/material';
 
 const CampanhasList = () => {
   const [campanhas, setCampanhas] = useState([]);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedCampanha, setSelectedCampanha] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +28,33 @@ const CampanhasList = () => {
   const handleEdit = (id) => {
     // Aqui você pode redirecionar para uma página de edição, por exemplo:
     alert('Editar campanha ' + id);
+  };
+
+  const handleOpenDeleteDialog = (campanha) => {
+    setSelectedCampanha(campanha);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setSelectedCampanha(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedCampanha) {
+      console.log("Tentando deletar campanha com id:", selectedCampanha.id);
+      api.delete(`/api/campanhas/${selectedCampanha.id}`)
+        .then((response) => {
+          console.log("Resposta da exclusão:", response);
+          // Atualiza a lista removendo a campanha apagada
+          setCampanhas(prev => prev.filter(c => c.id !== selectedCampanha.id));
+          handleCloseDeleteDialog();
+        })
+        .catch((error) => {
+          console.error('Erro ao apagar campanha:', error);
+          handleCloseDeleteDialog();
+        });
+    }
   };
 
   return (
@@ -57,8 +89,19 @@ const CampanhasList = () => {
               >
                 Carregar Dashboard
               </Button>
-              <Button variant="outlined" onClick={() => handleEdit(c.id)}>
+              <Button 
+                variant="outlined" 
+                onClick={() => handleEdit(c.id)} 
+                sx={{ marginRight: '1rem' }}
+              >
                 Editar Dados
+              </Button>
+              <Button 
+                variant="contained" 
+                color="error"
+                onClick={() => handleOpenDeleteDialog(c)}
+              >
+                Apagar Campanha
               </Button>
             </Box>
           </Paper>
@@ -69,6 +112,27 @@ const CampanhasList = () => {
           Adicionar Nova Campanha
         </Button>
       )}
+
+      {/* Diálogo de confirmação para apagar campanha */}
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+      >
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza que deseja apagar a campanha "{selectedCampanha?.nome}"?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} variant="outlined">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmDelete} variant="contained" color="error">
+            Apagar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

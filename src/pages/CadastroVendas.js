@@ -238,9 +238,12 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
       <form onSubmit={handleAddOrUpdateVenda}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
+            {/* <label htmlFor="telefone">Telefone</label> */}
             <TextField
+              id="cliente"
               label={editingIndex !== null ? `Cliente ${editingIndex + 1}` : `Cliente ${sales.length + 1}`}
               name="cliente"
+              // label="Nome do Cliente"
               value={vendaForm.cliente}
               onChange={handleInputChange}
               fullWidth
@@ -269,10 +272,10 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
+            <label htmlFor="telefone">Telefone</label>
             <TextField
-              label="Telefone"
+              id="telefone"
               name="telefone"
-              type="tel"
               value={vendaForm.telefone}
               onChange={handleInputChange}
               fullWidth
