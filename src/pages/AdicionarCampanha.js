@@ -44,10 +44,8 @@ const AdicionarCampanha = () => {
       vendido_ia: statusVendidoIA,
       trocar_depois: statusTrocarDepois,
       confirmar: statusConfirmar,
-      outros: statusOutros,
-      total_status: totalStatus,
+      outros: statusOutros
     };
-
 
     try {
       // await axios.post('http://localhost:5000/api/campanhas', campanha);
