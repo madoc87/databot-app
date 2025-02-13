@@ -27,7 +27,8 @@ const CampanhasList = () => {
 
   const handleEdit = (id) => {
     // Aqui você pode redirecionar para uma página de edição, por exemplo:
-    alert('Editar campanha ' + id);
+    // alert('Editar campanha ' + id);
+    navigate(`/editar/${id}`);
   };
 
   const handleOpenDeleteDialog = (campanha) => {

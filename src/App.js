@@ -7,6 +7,7 @@ import CampanhasList from './pages/CampanhasList';
 import AdicionarCampanha from './pages/AdicionarCampanha';
 import Dashboard from './pages/Dashboard';
 import CadastroVendas from './pages/CadastroVendas';
+import EditarCampanha from './pages/EditarCampanha';
 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import Add from '@mui/icons-material/Add';
@@ -72,6 +73,7 @@ function AppContent() {
         <Route path="/adicionar" element={<AdicionarCampanha />} />
         <Route path="/dashboard/:id" element={<Dashboard />} />
         <Route path="/vendas" element={<CadastroVendas />} />
+        <Route path="/editar/:id" element={<EditarCampanha />} />
       </Routes>
     </Router>
     </>
