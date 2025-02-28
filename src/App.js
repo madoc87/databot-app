@@ -4,10 +4,9 @@ import { Box, Button, Switch, useTheme, GlobalStyles } from '@mui/material';
 import { useContext } from 'react';
 
 import CampanhasList from './pages/CampanhasList';
-import AdicionarCampanha from './pages/AdicionarCampanha';
+import FormCampanha from './pages/FormCampanha';
 import Dashboard from './pages/Dashboard';
 import CadastroVendas from './pages/CadastroVendas';
-import EditarCampanha from './pages/EditarCampanha';
 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import Add from '@mui/icons-material/Add';
@@ -70,10 +69,10 @@ function AppContent() {
 
       <Routes>
         <Route path="/" element={<CampanhasList />} />
-        <Route path="/adicionar" element={<AdicionarCampanha />} />
+        <Route path="/adicionar" element={<FormCampanha />} />
         <Route path="/dashboard/:id" element={<Dashboard />} />
         <Route path="/vendas" element={<CadastroVendas />} />
-        <Route path="/editar/:id" element={<EditarCampanha />} />
+        <Route path="/editar/:id" element={<FormCampanha />} />
       </Routes>
     </Router>
     </>

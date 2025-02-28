@@ -209,6 +209,28 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
     mb: 2
   };
 
+  const handleRiscarVenda = async (venda) => {
+    try {
+      const vendaAtualizada = {
+        ...venda,
+        riscado: venda.riscado ? 0 : 1
+      };
+
+      // Envia a atualização para o backend
+      await api.put(`/api/vendas/${venda.id}`, vendaAtualizada);
+      
+      // Atualiza o estado local
+      setSales(sales.map(v => 
+        v.id === venda.id ? vendaAtualizada : v
+      ));
+      
+      console.log('Venda atualizada com sucesso:', vendaAtualizada);
+    } catch (error) {
+      console.error('Erro ao atualizar venda:', error);
+      alert('Erro ao marcar/desmarcar venda como lançada');
+    }
+  };
+
   return (
     <Box sx={{ maxWidth: 800, margin: 'auto', padding: '2rem' }}>
       <Typography variant="h6" sx={headerSx}>
