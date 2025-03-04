@@ -23,7 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import api from '../api'; // Importa a instância centralizada
-import { useTheme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 const CadastroVendas = () => {
   const theme = useTheme();
@@ -438,7 +438,12 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
                           {venda.mensagem}
                         </Typography>
                       ) : null}
-                      <CardContent sx={venda.riscado ? { textDecoration: 'line-through', color: 'gray' } : {}}>
+                      <CardContent sx={venda.riscado ? { 
+                        textDecoration: 'line-through', 
+                        '& .MuiTypography-root': { 
+                          color: theme.palette.custom.strikethrough
+                        }
+                      } : {}}>
                         <Typography variant="subtitle1" color="text.primary">{venda.cliente}</Typography>
                         <Typography variant="body1" color="text.primary">Status: {venda.status}</Typography>
                         <Typography variant="body1" color="text.primary">Telefone: {venda.telefone}</Typography>
@@ -486,7 +491,12 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
                     {venda.mensagem}
                   </Typography>
                 ) : null}
-                <CardContent sx={venda.riscado ? { textDecoration: 'line-through', color: 'gray' } : {}}>
+                <CardContent sx={venda.riscado ? { 
+                  textDecoration: 'line-through', 
+                  '& .MuiTypography-root': { 
+                    color: theme.palette.custom.strikethrough
+                  }
+                } : {}}>
                   <Typography variant="subtitle1" color="text.primary">{venda.cliente}</Typography>
                   <Typography variant="body1" color="text.primary">Status: {venda.status}</Typography>
                   <Typography variant="body1" color="text.primary">Telefone: {venda.telefone}</Typography>
@@ -538,7 +548,7 @@ ${venda.observacao ? 'Observação: ' + venda.observacao : ''}`;
         open={Boolean(menuAnchorEl)}
         onClose={handleMenuClose}
       >
-        {["Lançado no sistema", "Env para Jessica", "Env para Ana", "Env para outro"].map(option => (
+        {["Lançado no sistema", "Env para Jessica", "Env para Bruna", "Env para Ana", "Env para outro"].map(option => (
           <MenuItem key={option} onClick={() => handleSelectOption(option)}>
             {option}
           </MenuItem>
