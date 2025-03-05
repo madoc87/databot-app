@@ -2,10 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Paper, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Box, Typography, Paper, ToggleButtonGroup, ToggleButton, useTheme } from '@mui/material';
 import { Bar, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Legend, ChartDataLabels);
+
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, ChartDataLabels);
 
@@ -13,6 +16,7 @@ const Dashboard = () => {
   const { id } = useParams();
   const [campanha, setCampanha] = useState(null);
   const [chartType, setChartType] = useState('bar');
+  const theme = useTheme();
 
   // Tamanhos do gráfico
   const chartWidth = 600;
@@ -110,57 +114,7 @@ const Dashboard = () => {
     }
   };
 
-  // Opções específicas para gráfico de pizza – adiciona a legenda customizada
-  const pieOptions = {
-    ...commonOptions,
-    plugins: {
-      ...commonOptions.plugins,
-      legend: {
-        display: true,
-        position: 'bottom',
-        labels: {
-          // Gera os itens da legenda a partir dos labels e das cores do dataset
-          generateLabels: (chart) => {
-            const dataset = chart.data.datasets[0];
-            if (chart.data.labels.length && dataset) {
-              return chart.data.labels.map((label, index) => ({
-                text: label,
-                fillStyle: dataset.backgroundColor[index],
-                strokeStyle: dataset.backgroundColor[index],
-                lineWidth: 1,
-                hidden: isNaN(dataset.data[index]) || chart.getDatasetMeta(0).data[index].hidden,
-                index: index,
-              }));
-            }
-            return [];
-          },
-        },
-      },
-      // Se desejar manter os datalabels no gráfico de pizza, mantenha ou ajuste conforme necessidade
-      datalabels: {
-        formatter: (value, context) => {
-          const rawValue = [
-            campanha.vendido_manual,
-            campanha.vendido_ia,
-            campanha.trocar_depois,
-            campanha.confirmar,
-            campanha.outros
-          ][context.dataIndex];
-          const percent = totalRespostas 
-            ? ((Number(rawValue) / totalRespostas) * 100).toFixed(2)
-            : 0;
-          // Retorna um array para gerar duas linhas (bruto e percentual)
-          return [rawValue, percent + '%'];
-        },
-        color: '#fff', // Cor alterada para cinza conforme sua alteração
-        font: {
-          weight: 'bold'
-        }
-      }
-    },
-  };
-
-  // Opções para gráfico de barras (mantendo os datalabels para barras também)
+  // Opções específicas para gráfico de barras
   const barOptions = {
     ...commonOptions,
     plugins: {
@@ -168,30 +122,19 @@ const Dashboard = () => {
       legend: {
         display: true,
         position: 'bottom',
+        labels: {
+          color: theme.palette.custom.legendText,
+          font: {
+            size: theme.typography.chart.legendSize
+          }
+        }
       },
       datalabels: {
         labels: {
-          raw: {
+          percent: {
             display: true,
             anchor: 'end',
             align: 'end',
-            formatter: (value, context) => {
-              const rawValue = [
-                campanha.vendido_manual,
-                campanha.vendido_ia,
-                campanha.trocar_depois,
-                campanha.confirmar,
-                campanha.outros
-              ][context.dataIndex];
-              return rawValue;
-            },
-            color: '#7a7a7a',
-            font: { weight: 'bold' }
-          },
-          percent: {
-            display: true,
-            anchor: 'center',
-            align: 'center',
             formatter: (value, context) => {
               const rawValue = [
                 campanha.vendido_manual,
@@ -205,17 +148,70 @@ const Dashboard = () => {
                 : 0;
               return percent + '%';
             },
-            color: '#fff',
-            font: { weight: 'normal' }
+            color: '#7a7a7a', //Cores dos numeros percentuais do grafico de barras
+            font: { 
+              size: theme.typography.chart.barValueSize,
+              weight: 'bold' 
+            }
+          },
+          raw: {
+            display: true,
+            anchor: 'center',
+            align: 'center',
+            formatter: (value, context) => {
+              const rawValue = [
+                campanha.vendido_manual,
+                campanha.vendido_ia,
+                campanha.trocar_depois,
+                campanha.confirmar,
+                campanha.outros
+              ][context.dataIndex];
+              return rawValue;
+            },
+            color: theme.palette.custom.chartLabel, //Cores dos numeros brutos de dentro das barras do grafico
+            font: { 
+              size: theme.typography.chart.barValueSize,
+              weight: 'normal' 
+            }
           }
         }
       }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: (value) => value + '%',
+    }
+  };
+
+  // Opções específicas para gráfico de pizza
+  const pieOptions = {
+    ...commonOptions,
+    plugins: {
+      ...commonOptions.plugins,
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          color: theme.palette.custom.legendText,
+          font: {
+            size: theme.typography.chart.legendSize
+          }
+        }
+      },
+      datalabels: {
+        formatter: (value, context) => {
+          const rawValue = [
+            campanha.vendido_manual,
+            campanha.vendido_ia,
+            campanha.trocar_depois,
+            campanha.confirmar,
+            campanha.outros
+          ][context.dataIndex];
+          const percent = totalRespostas 
+            ? ((Number(rawValue) / totalRespostas) * 100).toFixed(2)
+            : 0;
+          return [rawValue, percent + '%'];
+        },
+        color: theme.palette.custom.chartLabel,
+        font: {
+          size: theme.typography.chart.pieValueSize,
+          weight: 'bold'
         }
       }
     }
