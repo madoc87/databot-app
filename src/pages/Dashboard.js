@@ -1,25 +1,24 @@
 // frontend/src/pages/Dashboard.js
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
 import api from '../api';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, Paper, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, ChartDataLabels);
 
 const Dashboard = () => {
   const { id } = useParams();
   const [campanha, setCampanha] = useState(null);
   const [chartType, setChartType] = useState('bar');
 
-  // Variáveis para tamanho do gráfico
-  const chartWidth = 600;  // Alterar largura do grafico
-  const chartHeight = 350; // Alterar altura do grafico
+  // Tamanhos do gráfico
+  const chartWidth = 600;
+  const chartHeight = 350;
 
   useEffect(() => {
-    // axios.get(`http://localhost:5000/api/campanhas/${id}`)
     api.get(`/api/campanhas/${id}`)
       .then(response => setCampanha(response.data))
       .catch(error => console.error('Erro ao buscar campanha:', error));
@@ -29,15 +28,30 @@ const Dashboard = () => {
     return <Typography>Carregando campanha...</Typography>;
   }
 
-  const totalRespostas = Number(campanha.vendido_manual) + Number(campanha.vendido_ia) +
-    Number(campanha.trocar_depois) + Number(campanha.confirmar) + Number(campanha.outros);
+  // Cálculo do total de respostas e porcentagem
+  const totalRespostas = 
+    Number(campanha.vendido_manual) + 
+    Number(campanha.vendido_ia) +
+    Number(campanha.trocar_depois) + 
+    Number(campanha.confirmar) + 
+    Number(campanha.outros);
 
-  const calcPercent = (value) => totalRespostas ? ((Number(value) / totalRespostas) * 100).toFixed(2) : 0;
+  const calcPercent = (value) => totalRespostas 
+    ? ((Number(value) / totalRespostas) * 100).toFixed(2) 
+    : 0;
 
+  // Dados comuns para ambos os gráficos
   const data = {
-    labels: ['Vendido Manual', 'Vendido IA', 'Trocar Depois', 'Confirmar', 'Outros'],
+    labels: [
+      'Vendido Manual', 
+      'Vendido IA', 
+      'Trocar Depois', 
+      'Confirmar', 
+      'Outros'
+    ],
     datasets: [
       {
+        // Aqui o label do dataset pode ser qualquer coisa – para pizza ele não é utilizado na legenda
         label: 'Percentual de Respostas (%)',
         data: [
           calcPercent(campanha.vendido_manual),
@@ -63,22 +77,146 @@ const Dashboard = () => {
     }
   };
 
-  // Opções para ambos os tipos de gráfico (exibindo tooltips com as informações)
-  const chartOptions = {
+  // Configuração comum (tooltip e interações)
+  const commonOptions = {
     maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
+      mode: 'nearest'
+    },
+    hover: {
+      mode: 'nearest',
+      intersect: false
+    },
     plugins: {
       tooltip: {
+        enabled: true,
         callbacks: {
-          label: function(context) {
-            const label = context.label || '';
-            const value = context.raw || 0;
-            return `${label}: ${value}%`;
+          label: (context) => {
+            const rawValue = [
+              campanha.vendido_manual,
+              campanha.vendido_ia,
+              campanha.trocar_depois,
+              campanha.confirmar,
+              campanha.outros
+            ][context.dataIndex];
+            const percent = totalRespostas 
+              ? ((Number(rawValue) / totalRespostas) * 100).toFixed(2) 
+              : 0;
+            return `${context.label}: ${context.parsed.y}% (${rawValue}) - ${percent}%`;
           }
         }
-      },
+      }
+    }
+  };
+
+  // Opções específicas para gráfico de pizza – adiciona a legenda customizada
+  const pieOptions = {
+    ...commonOptions,
+    plugins: {
+      ...commonOptions.plugins,
       legend: {
         display: true,
-        position: 'bottom'
+        position: 'bottom',
+        labels: {
+          // Gera os itens da legenda a partir dos labels e das cores do dataset
+          generateLabels: (chart) => {
+            const dataset = chart.data.datasets[0];
+            if (chart.data.labels.length && dataset) {
+              return chart.data.labels.map((label, index) => ({
+                text: label,
+                fillStyle: dataset.backgroundColor[index],
+                strokeStyle: dataset.backgroundColor[index],
+                lineWidth: 1,
+                hidden: isNaN(dataset.data[index]) || chart.getDatasetMeta(0).data[index].hidden,
+                index: index,
+              }));
+            }
+            return [];
+          },
+        },
+      },
+      // Se desejar manter os datalabels no gráfico de pizza, mantenha ou ajuste conforme necessidade
+      datalabels: {
+        formatter: (value, context) => {
+          const rawValue = [
+            campanha.vendido_manual,
+            campanha.vendido_ia,
+            campanha.trocar_depois,
+            campanha.confirmar,
+            campanha.outros
+          ][context.dataIndex];
+          const percent = totalRespostas 
+            ? ((Number(rawValue) / totalRespostas) * 100).toFixed(2)
+            : 0;
+          // Retorna um array para gerar duas linhas (bruto e percentual)
+          return [rawValue, percent + '%'];
+        },
+        color: '#fff', // Cor alterada para cinza conforme sua alteração
+        font: {
+          weight: 'bold'
+        }
+      }
+    },
+  };
+
+  // Opções para gráfico de barras (mantendo os datalabels para barras também)
+  const barOptions = {
+    ...commonOptions,
+    plugins: {
+      ...commonOptions.plugins,
+      legend: {
+        display: true,
+        position: 'bottom',
+      },
+      datalabels: {
+        labels: {
+          raw: {
+            display: true,
+            anchor: 'end',
+            align: 'end',
+            formatter: (value, context) => {
+              const rawValue = [
+                campanha.vendido_manual,
+                campanha.vendido_ia,
+                campanha.trocar_depois,
+                campanha.confirmar,
+                campanha.outros
+              ][context.dataIndex];
+              return rawValue;
+            },
+            color: '#7a7a7a',
+            font: { weight: 'bold' }
+          },
+          percent: {
+            display: true,
+            anchor: 'center',
+            align: 'center',
+            formatter: (value, context) => {
+              const rawValue = [
+                campanha.vendido_manual,
+                campanha.vendido_ia,
+                campanha.trocar_depois,
+                campanha.confirmar,
+                campanha.outros
+              ][context.dataIndex];
+              const percent = totalRespostas 
+                ? ((Number(rawValue) / totalRespostas) * 100).toFixed(2)
+                : 0;
+              return percent + '%';
+            },
+            color: '#fff',
+            font: { weight: 'normal' }
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: (value) => value + '%',
+        }
       }
     }
   };
@@ -121,9 +259,9 @@ const Dashboard = () => {
 
       <Box sx={{ width: chartWidth, height: chartHeight, margin: 'auto' }}>
         {chartType === 'bar' ? (
-          <Bar data={data} options={chartOptions} />
+          <Bar data={data} options={barOptions} />
         ) : (
-          <Pie data={data} options={chartOptions} />
+          <Pie data={data} options={pieOptions} />
         )}
       </Box>
     </Box>
