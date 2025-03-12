@@ -5,7 +5,7 @@ export const lightTheme = createTheme({
     mode: 'light',
     custom: {
       // strikethrough: '#828282'
-      strikethrough: '#f9f9f9',
+      strikethrough: '#828282',
       chartLabel: '#828282',      // cor dos labels no gráfico pizza (tema light)
       legendText: '#828282'       // cor do texto da legenda (tema light)
     }
@@ -19,6 +19,8 @@ export const lightTheme = createTheme({
     }
   }
 });
+
+
 
 export const darkTheme = createTheme({
   palette: {

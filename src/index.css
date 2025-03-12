@@ -11,3 +11,28 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Tema Light (padrão) */
+::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+
+/* Tema Dark */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-calendar-picker-indicator {
+    filter: invert(1)
+            brightness(50%)
+            sepia(10%)
+            saturate(10000%)
+            hue-rotate(180deg);
+  }
+}
+
+/* Alternativa: usar classe específica para tema dark */
+/* .dark-theme ::-webkit-calendar-picker-indicator {
+  filter: invert(1)
+          brightness(50%)
+          sepia(10%)
+          saturate(10000%)
+          hue-rotate(180deg);
+} */

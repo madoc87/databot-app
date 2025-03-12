@@ -65,7 +65,14 @@ const AdicionarCampanha = () => {
             bgcolor: 'background.default',  // utiliza o fundo definido no tema
             color: 'text.primary',         // utiliza a cor de texto definida no tema
         }}>
-      <Typography variant="h5" gutterBottom>Adicionar Campanha</Typography>
+      <Typography 
+        variant="h5" 
+        gutterBottom
+        color='text.primary'
+      >
+        Adicionar Campanha
+      </Typography>
+
       <form onSubmit={handleSubmit}>
         <TextField
           label="Nome da Campanha"

@@ -83,7 +83,7 @@ const FormCampanha = () => {
 
   return (
     <Box sx={{ maxWidth: 500, margin: 'auto', padding: '2rem' }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" gutterBottom color="text.primary">
         {id ? "Editar Campanha" : "Adicionar Campanha"}
       </Typography>
       <form onSubmit={handleSubmit}>
@@ -137,8 +137,16 @@ const FormCampanha = () => {
           required
         />
 
-        <Typography variant="subtitle1" sx={{ marginTop: '1rem' }}>
-          Status dos Clientes
+        <Typography variant="subtitle1" color="text.primary" sx={{ marginTop: '1rem' }}>
+          Status dos Clientes (
+          {
+          Number(statusVendidoManual) + 
+          Number(statusVendidoIA) + 
+          Number(statusTrocarDepois) + 
+          Number(statusConfirmar) + 
+          Number(statusOutros)
+          }
+          )
         </Typography>
         <TextField
           label="Vendido Manual"

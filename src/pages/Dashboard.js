@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Paper, ToggleButtonGroup, ToggleButton, useTheme } from '@mui/material';
+import { Box, Typography, Paper, ToggleButtonGroup, ToggleButton, useTheme, Grid } from '@mui/material';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -43,6 +43,21 @@ const Dashboard = () => {
   const calcPercent = (value) => totalRespostas 
     ? ((Number(value) / totalRespostas) * 100).toFixed(2) 
     : 0;
+
+//totalRespostas 
+const custoTotal = "R$ " + (campanha.numero_telefones * 0.1).toFixed(2); 
+
+//Num respostas / num total de disparos * 100
+const percRespostas = ((totalRespostas / campanha.numero_telefones) * 100).toFixed(1)+" %";
+
+
+//Num vendas / num total de disparos * 100
+const conversaoDisp = (((campanha.vendido_manual + campanha.vendido_ia) / campanha.numero_telefones) * 100).toFixed(1)+" %";
+
+
+//Num vendas / num total de respostas * 100
+const conversaoResp = (((campanha.vendido_manual + campanha.vendido_ia) / totalRespostas) * 100).toFixed(1)+" %";
+
 
   // Dados comuns para ambos os gráficos
   const data = {
@@ -217,26 +232,48 @@ const Dashboard = () => {
     }
   };
 
+  const espacamentoLinhas = 1;
+
   return (
     <Box sx={{ padding: '2rem', bgcolor: 'background.default', color: 'text.primary', minHeight: '100vh' }}>
       <Typography variant="h4" gutterBottom>
         Dashboard da Campanha: {campanha.nome}
       </Typography>
-      <Paper sx={{ padding: '1rem', marginBottom: '2rem' }}>
-        <Typography>
-          <strong>Data da Campanha:</strong> {new Date(campanha.data_inicio).toLocaleDateString()}
-        </Typography>
-        <Typography>
-          <strong>Número de Clientes:</strong> {campanha.numero_clientes}
-        </Typography>
-        <Typography>
-          <strong>Número de Telefones:</strong> {campanha.numero_telefones}
-        </Typography>
-        <Typography>
-          <strong>Total de Respostas:</strong> {totalRespostas}
-        </Typography>
-      </Paper>
       
+      <Paper sx={{ padding: '1rem', marginBottom: '2rem' }}>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Data da Campanha:</strong> {new Date(campanha.data_inicio).toLocaleDateString()}
+            </Typography>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Número de Clientes:</strong> {campanha.numero_clientes}
+            </Typography>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Número de Telefones:</strong> {campanha.numero_telefones}
+            </Typography>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Total de Respostas:</strong> {totalRespostas}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Custo Total (R$ 0,10/disparo):</strong> {custoTotal}
+            </Typography>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Percentual de Respostas (Respostas/Disparos):</strong> {percRespostas}
+            </Typography>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Taxa de Conversão (Vendas/Disparos):</strong> {conversaoDisp}
+            </Typography>
+            <Typography sx={{ mb: espacamentoLinhas }}>
+              <strong>Taxa de Conversão (Vendas/Respostas):</strong> {conversaoResp}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Paper>
+
       <Box sx={{ marginBottom: '1rem' }}>
         <ToggleButtonGroup
           value={chartType}
